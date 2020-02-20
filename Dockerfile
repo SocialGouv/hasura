@@ -1,1 +1,1 @@
-FROM hasura/graphql-engine:v1.0.0
+FROM hasura/graphql-engine:v1.1.0
