@@ -13,7 +13,7 @@ create_namespace:
   before_script:
     - source ./.gitlab-ci/.env.sh
   script:
-    # Skip the job if the namespace exists
+    # Skip the job if the namespace exists toto
     # - "[[ $(kubectl get namespace ${K8S_NAMESPACE}) ]] && exit ${CI_JOB_SKIP_EXIT_CODE:-0}"
     #
     - kubectl create namespace ${K8S_NAMESPACE}
