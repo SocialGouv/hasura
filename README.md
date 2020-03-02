@@ -19,5 +19,5 @@ HASURA_GRAPHQL_ENABLED_LOG_TYPES=startup, http-log, webhook-log, websocket-log, 
 
 Run the container:
 ```shell
-docker run -it --rm -p 8080:8080 --env-file=.env hasura
+docker run -it --rm -p 8080:8080 --env-file .env hasura
 ```
