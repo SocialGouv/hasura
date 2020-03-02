@@ -14,7 +14,7 @@ create_namespace:
     - source ./.gitlab-ci/.env.sh
   script:
     # Skip the job if the namespace exists totoo
-    # - "[[ $(kubectl get namespace ${K8S_NAMESPACE}) ]] && exit ${CI_JOB_SKIP_EXIT_CODE:-0}"
+    - "[[ $(kubectl get namespace ${K8S_NAMESPACE}) ]] && exit ${CI_JOB_SKIP_EXIT_CODE:-0}"
     #
     - kubectl create namespace ${K8S_NAMESPACE}
     #
