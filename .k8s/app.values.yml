@@ -1,0 +1,62 @@
+# Default values for Mas webapp. https://github.com/SocialGouv/helm-charts/blob/master/charts/webapp/values.yaml
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+---
+image:
+  repository: registry.gitlab.factory.social.gouv.fr/socialgouv/hasura
+
+labels:
+  app.kubernetes.io/part-of: hasura
+  owner: hasura
+  team: hasura
+
+deployment:
+  port: ${PORT}
+
+  annotations:
+    app.gitlab.com/app: ${CI_PROJECT_PATH_SLUG}
+    app.gitlab.com/env: ${CI_ENVIRONMENT_SLUG}
+
+  livenessProbe:
+    path: /
+  readinessProbe:
+    path: /
+
+  resources:
+    requests:
+      cpu: 100m
+      memory: 128Mi
+    limits:
+      cpu: 1000m
+      memory: 1024Mi
+
+  env:
+    - name: PORT
+      value: "${PORT}"
+    - name: HASURA_GRAPHQL_DATABASE_URL
+      value: "${HASURA_GRAPHQL_DATABASE_URL}"
+    - name: HASURA_GRAPHQL_ADMIN_SECRET
+      value: "${HASURA_GRAPHQL_ADMIN_SECRET}"
+    - name: HASURA_GRAPHQL_ENABLE_CONSOLE
+      value: "${HASURA_GRAPHQL_ENABLE_CONSOLE}"
+    - name: HASURA_GRAPHQL_ENABLED_LOG_TYPES
+      value: "${HASURA_GRAPHQL_ENABLED_LOG_TYPES}"
+
+service:
+  port: ${PORT}
+  targetPort: ${PORT}
+
+ingress:
+  enabled: true
+  annotations:
+    appgw.ingress.kubernetes.io/ssl-redirect: "true"
+    kubernetes.io/ingress.class: "azure/application-gateway"
+  hosts:
+    - host: "hasura.dev.fabrique.social.gouv.fr"
+      paths:
+        - path: /
+          servicePort: ${PORT}
+  tls:
+    - hosts:
+        - "hasura.dev.fabrique.social.gouv.fr"
+      secretName: hasura-crt
