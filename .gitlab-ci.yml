@@ -10,6 +10,8 @@ create_namespace:
   environment:
     name: factory-dev
   dependencies: []
+  before_script:
+    - source ./.gitlab-ci/.env.sh
   script:
     # Skip the job if the namespace exists
     - "[[ $(kubectl get namespace ${K8S_NAMESPACE}) ]] && exit ${CI_JOB_SKIP_EXIT_CODE:-0}"
@@ -36,5 +38,7 @@ Deployment:
   environment:
     name: factory-dev
   dependencies: []
+  before_script:
+    - source ./.gitlab-ci/.env.sh
   script:
     - kubectl apply -f .k8s/deploy.yml -n ${K8S_NAMESPACE}
