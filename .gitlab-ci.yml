@@ -41,4 +41,5 @@ Deployment:
   before_script:
     - source ./.gitlab-ci/.env.sh
   script:
+    - envsubst .k8s/deploy.yml > .k8s/deploy.yml
     - kubectl apply -f .k8s/deploy.yml -n ${K8S_NAMESPACE}
