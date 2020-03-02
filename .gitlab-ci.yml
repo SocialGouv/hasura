@@ -9,9 +9,10 @@
 #   PORT: 8080
 #   VALUES_FILE: ./.k8s/app.values.yml
 
-image:
-  name: hasura/graphql-engine:v1.1.0
+before_script:
+  - docker info
 
-test:
+build_image:
   script:
-  - exit 0
+    - docker build -t hasura .
+    - docker run hasura
