@@ -13,7 +13,7 @@ create_namespace:
   before_script:
     - source ./.gitlab-ci/.env.sh
   script:
-    # Skip the job if the namespace exists toto
+    # Skip the job if the namespace exists totoo
     # - "[[ $(kubectl get namespace ${K8S_NAMESPACE}) ]] && exit ${CI_JOB_SKIP_EXIT_CODE:-0}"
     #
     - kubectl create namespace ${K8S_NAMESPACE}
@@ -41,5 +41,6 @@ Deployment:
   before_script:
     - source ./.gitlab-ci/.env.sh
   script:
-    - envsubst .k8s/deploy.yml > .k8s/deploy.yml
+    - envsubst < .k8s/deploy.yml > .k8s/deploy.yml
+    - cat .k8s/deploy.yml
     - kubectl apply -f .k8s/deploy.yml -n ${K8S_NAMESPACE}
