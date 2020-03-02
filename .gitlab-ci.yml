@@ -1,18 +1,40 @@
----
-# include:
-#   - project: SocialGouv/gitlab-ci-yml
-#     file: /autodevops_simple_app.yml
-#     ref: v7.3.3
-#
-# variables:
-#   PROJECT: "hasura"
-#   PORT: 8080
-#   VALUES_FILE: ./.k8s/app.values.yml
+stages:
+  - Registration
+  - Deployment
 
-before_script:
-  - docker info
-
-build_image:
+create_namespace:
+  image: registry.gitlab.factory.social.gouv.fr/socialgouv/docker/kubectl:0.21.0
+  variables:
+    REMOTE_URL: "https://github.com/${CI_PROJECT_PATH}.git"
+  stage: "Registration"
+  environment:
+    name: factory-dev
+  dependencies: []
   script:
-    - docker build -t hasura .
-    - docker run hasura
+    # Skip the job if the namespace exists
+    - "[[ $(kubectl get namespace ${K8S_NAMESPACE}) ]] && exit ${CI_JOB_SKIP_EXIT_CODE:-0}"
+    #
+    - kubectl create namespace ${K8S_NAMESPACE}
+    #
+    # Add git metadata to be able to auto destroy that namespaces
+    # see https://github.com/SocialGouv/docker/tree/v0.18.0/k8s-ns-killer
+    - kubectl annotate namespace ${K8S_NAMESPACE} git/remote=${REMOTE_URL}
+    - kubectl annotate namespace ${K8S_NAMESPACE} git/branch=${CI_COMMIT_REF_NAME}
+    #
+    # Fake rancher namespace creation
+    - kubectl annotate namespace ${K8S_NAMESPACE} field.cattle.io/projectId=${RANCHER_PROJECT_ID}
+    - kubectl annotate namespace ${K8S_NAMESPACE} field.cattle.io/creatorId=gitlab
+    #
+    # Use wildcard certificate
+    - kubectl label namespace ${K8S_NAMESPACE} cert=wildcard
+
+Deployment:
+  image: registry.gitlab.factory.social.gouv.fr/socialgouv/docker/kubectl:0.21.0
+  variables:
+    REMOTE_URL: "https://github.com/${CI_PROJECT_PATH}.git"
+  stage: "Deployment"
+  environment:
+    name: factory-dev
+  dependencies: []
+  script:
+    - kubectl apply -f .k8s/deploy.yml -n ${K8S_NAMESPACE}
