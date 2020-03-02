@@ -26,17 +26,6 @@ spec:
     matchLabels:
       run: hasura
   strategy: {}
-  env:
-    - name: PORT
-      value: "${PORT}"
-    - name: HASURA_GRAPHQL_DATABASE_URL
-      value: "${HASURA_GRAPHQL_DATABASE_URL}"
-    - name: HASURA_GRAPHQL_ADMIN_SECRET
-      value: "${HASURA_GRAPHQL_ADMIN_SECRET}"
-    - name: HASURA_GRAPHQL_ENABLE_CONSOLE
-      value: "${HASURA_GRAPHQL_ENABLE_CONSOLE}"
-    - name: HASURA_GRAPHQL_ENABLED_LOG_TYPES
-      value: "${HASURA_GRAPHQL_ENABLED_LOG_TYPES}"
   template:
     metadata:
       creationTimestamp: null
@@ -44,9 +33,20 @@ spec:
         run: hasura
     spec:
       containers:
-      - image: hasura/graphql-engine:v1.1.0
-        name: hasura
-        ports:
-        - containerPort: 8080
-        resources: {}
+        - image: hasura/graphql-engine:v1.1.0
+          name: hasura
+          ports:
+            - containerPort: 8080
+          resources: {}
+          env:
+            - name: PORT
+              value: "${PORT}"
+            - name: HASURA_GRAPHQL_DATABASE_URL
+              value: "${HASURA_GRAPHQL_DATABASE_URL}"
+            - name: HASURA_GRAPHQL_ADMIN_SECRET
+              value: "${HASURA_GRAPHQL_ADMIN_SECRET}"
+            - name: HASURA_GRAPHQL_ENABLE_CONSOLE
+              value: "${HASURA_GRAPHQL_ENABLE_CONSOLE}"
+            - name: HASURA_GRAPHQL_ENABLED_LOG_TYPES
+              value: "${HASURA_GRAPHQL_ENABLED_LOG_TYPES}"
 status: {}
